@@ -49,6 +49,11 @@ public class Portal
 
     public string FormatText()
     {
+        if (Server == null)
+        {
+            return $"<size=5>Server\n\"<color=red>{TargetServer}</color>\"\nnot found!\n\nmodify plugins/lobby/config.yml";
+        }
+
         string tempText = _textFormat;
 
         Dictionary<string, Func<string>> placeHolders = new Dictionary<string, Func<string>>()
@@ -58,6 +63,16 @@ public class Portal
                     return Server.Name;
                 }
             },
+            { "%onlinePlayers%", () => 
+                {
+                    return Server.ClientsCount.ToString();
+                } 
+            },
+            { "%maxPlayers%", () =>
+                {
+                    return Server.Settings.MaxClients.ToString();
+                }
+            }
         };
 
         foreach (var placeholder in placeHolders)
