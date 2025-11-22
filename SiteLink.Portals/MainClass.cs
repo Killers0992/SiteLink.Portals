@@ -14,7 +14,7 @@ public class MainClass : Plugin
 
     public override Version Version { get; } = new Version(1, 0, 1);
 
-    public override Version ApiVersion { get; } = new Version(SiteLinkAPI.ApiVersionText;
+    public override Version ApiVersion { get; } = new Version(SiteLinkAPI.ApiVersionText);
 
     public override void OnLoad(IServiceCollection collection)
     {
