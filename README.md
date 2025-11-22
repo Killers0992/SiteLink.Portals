@@ -12,7 +12,7 @@ It allows other plugins (like [SiteLink.Lobby](https://github.com/Killers0992/Si
 
 | Dependency | Version |
 |-------------|----------|
-| [SiteLink](https://github.com/Killers0992/SiteLink) | **0.0.1** or newer |
+| [SiteLink](https://github.com/Killers0992/SiteLink) | **0.1.0** or newer |
 
 ---
 
