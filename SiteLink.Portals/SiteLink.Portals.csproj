@@ -6,15 +6,25 @@
 	</PropertyGroup>
 
 	<ItemGroup>
-		<PackageReference Include="SiteLink.API" Version="0.0.3" />
+		<PackageReference Include="SiteLink.API" Version="0.0.3" Condition="'$(Configuration)' == 'Release'" />
+		<PackageReference Include="Microsoft.Extensions.DependencyInjection.Abstractions" Version="9.0.10" Condition="'$(Configuration)' == 'Debug'" />
 	</ItemGroup>
 	
 	<ItemGroup>
 		<Reference Include="Assembly-CSharp">
 			<HintPath>..\..\SiteLink\SiteLink\bin\Release\net9.0\Assembly-CSharp.dll</HintPath>
 		</Reference>
+		
 		<Reference Include="UnityEngine.CoreModule">
 			<HintPath>..\..\SiteLink\SiteLink\bin\Release\net9.0\UnityEngine.CoreModule.dll</HintPath>
 		</Reference>
+		
+		<Reference Include="SiteLink.API" Condition="'$(Configuration)' == 'Debug'">
+			<HintPath>..\..\SiteLink\SiteLink.API\bin\Debug\net9.0\SiteLink.API.dll</HintPath>
+		</Reference>
 	</ItemGroup>
+
+	<Target Name="PostBuild" AfterTargets="PostBuildEvent">
+		<Copy SourceFiles="$(TargetDir)$(TargetName).dll" Condition="'$(Configuration)' == 'Debug'" DestinationFolder="D:\VS Projects\SiteLink\SiteLink\bin\Debug\net9.0\Plugins" />
+	</Target>
 </Project>
