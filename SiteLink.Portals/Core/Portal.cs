@@ -41,6 +41,10 @@ public class Portal
         _text.Position = position;
         _text.Rotation = rotation;
 
+        _text.TextToy.Position = position;
+        _text.TextToy.Rotation = rotation;
+        _text.TextToy.Scale = Vector3.one;
+
         _text.TextToy.TextFormat = FormatText();
         _text.TextToy.DisplaySize = new Vector2(150f, 50f);
 
@@ -65,7 +69,7 @@ public class Portal
             },
             { "%onlinePlayers%", () => 
                 {
-                    return Server.ClientsCount.ToString();
+                    return Server.SessionsCount.ToString();
                 } 
             },
             { "%maxPlayers%", () =>
@@ -88,19 +92,19 @@ public class Portal
         if (_nextCheck > DateTime.Now)
             return;
 
-        foreach (Client client in World.GetClientsSnapshot())
+        foreach (Session session in World.GetClientsSnapshot())
         {
-            if (Vector3.Distance(client.Position, Position) > MinimumDistanceToActivePortal)
+            if (Vector3.Distance(session.Position, Position) > MinimumDistanceToActivePortal)
                 continue;
 
-            PlayerActivatedPortal(client);
+            PlayerActivatedPortal(session);
         }
 
         _nextCheck = DateTime.Now.AddSeconds(1);
     }
 
-    void PlayerActivatedPortal(Client client)
+    void PlayerActivatedPortal(Session session)
     {
-        client.Connect(TargetServer);
+        session.Connection?.Connect(TargetServer, false);
     }
 }
