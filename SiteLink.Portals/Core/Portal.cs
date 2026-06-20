@@ -1,4 +1,5 @@
 ﻿using SiteLink.API.Core;
+using SiteLink.API.Misc;
 using SiteLink.API.Networking;
 using SiteLink.API.Networking.Objects;
 using UnityEngine;
@@ -9,7 +10,7 @@ public class Portal
 {
     private DateTime _nextCheck;
     private TextToyObject _text;
-    private string _textFormat;
+    private Func<string> _textFormat;
 
     public static Dictionary<World, List<Portal>> SpawnedPortals = new Dictionary<World, List<Portal>>();
 
@@ -21,7 +22,7 @@ public class Portal
     public Vector3 Position { get; }
     public Quaternion Rotation { get; }
 
-    public Portal(World world, string targetServer, string textFormat, Vector3 position, Quaternion rotation)
+    public Portal(World world, string targetServer, Func<string> textFormat, Vector3 position, Quaternion rotation)
     {
         _textFormat = textFormat;
 
@@ -51,6 +52,23 @@ public class Portal
         portals.Add(this);
     }
 
+    public void UpdateText()
+    {
+        bool hasUpdates = false;
+
+        string newText = FormatText();
+
+        if (_text.TextToy.TextFormat != newText)
+        {
+            _text.TextToy.TextFormat = newText;
+
+            hasUpdates = true;
+        }
+
+        if (hasUpdates)
+            _text.SendUpdate();
+    }
+
     public string FormatText()
     {
         if (Server == null)
@@ -58,7 +76,7 @@ public class Portal
             return $"<size=5>Server\n\"<color=red>{TargetServer}</color>\"\nnot found!\n\nmodify plugins/lobby/config.yml";
         }
 
-        string tempText = _textFormat;
+        string tempText = _textFormat.Invoke();
 
         Dictionary<string, Func<string>> placeHolders = new Dictionary<string, Func<string>>()
         {
@@ -101,6 +119,8 @@ public class Portal
         }
 
         _nextCheck = DateTime.Now.AddSeconds(1);
+
+        UpdateText();
     }
 
     void PlayerActivatedPortal(Session session)

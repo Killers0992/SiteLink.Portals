@@ -9,9 +9,16 @@ public class PortalController
         if (!Portal.SpawnedPortals.TryGetValue(world, out List<Portal> portals))
             return;
 
-        foreach (Portal portal in portals)
+        try
         {
-            portal.Update();
+            foreach (Portal portal in portals)
+            {
+                portal.Update();
+            }
+        }
+        catch (Exception)
+        {
+
         }
     }
 }
