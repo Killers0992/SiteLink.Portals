@@ -1,7 +1,7 @@
-﻿using UnityEngine;
-using SiteLink.API.Core;
+﻿using SiteLink.API.Core;
 using SiteLink.API.Networking;
 using SiteLink.API.Networking.Objects;
+using UnityEngine;
 
 namespace Portals.Core;
 
@@ -67,10 +67,10 @@ public class Portal
                     return Server.Name;
                 }
             },
-            { "%onlinePlayers%", () => 
+            { "%onlinePlayers%", () =>
                 {
                     return Server.SessionsCount.ToString();
-                } 
+                }
             },
             { "%maxPlayers%", () =>
                 {
