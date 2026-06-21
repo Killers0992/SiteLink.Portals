@@ -1,5 +1,0 @@
-# Placeholders: {server_name}
-server_not_found: |-
-  <size=5>Server
-  "<color=red>{server_name}</color>"
-  not found!</size>
