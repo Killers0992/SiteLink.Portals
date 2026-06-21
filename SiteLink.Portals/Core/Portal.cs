@@ -2,6 +2,7 @@
 using SiteLink.API.Misc;
 using SiteLink.API.Networking;
 using SiteLink.API.Networking.Objects;
+using SiteLink.API.Translations;
 using UnityEngine;
 
 namespace Portals.Core;
@@ -46,7 +47,7 @@ public class Portal
         _text.TextToy.Rotation = rotation;
         _text.TextToy.Scale = Vector3.one;
 
-        _text.TextToy.TextFormat = FormatText();
+        _text.TextToy.TextFormat = string.Empty;
         _text.TextToy.DisplaySize = new Vector2(150f, 50f);
 
         portals.Add(this);
@@ -54,55 +55,31 @@ public class Portal
 
     public void UpdateText()
     {
-        bool hasUpdates = false;
-
-        string newText = FormatText();
-
-        if (_text.TextToy.TextFormat != newText)
+        foreach (Session observer in World.GetClientsSnapshot())
         {
-            _text.TextToy.TextFormat = newText;
-
-            hasUpdates = true;
+            TranslationContext context = TranslationContext.For(observer, Server, MainClass.Instance)
+                .With("server_name", TargetServer);
+            _text.SendText(observer, FormatText(observer), context);
         }
-
-        if (hasUpdates)
-            _text.SendUpdate();
     }
 
-    public string FormatText()
+    public string FormatText(Session observer = null)
     {
         if (Server == null)
-        {
-            return $"<size=5>Server\n\"<color=red>{TargetServer}</color>\"\nnot found!\n\nmodify plugins/lobby/config.yml";
-        }
+            return MainClass.Instance.Translate(
+                observer,
+                translations => translations.ServerNotFound,
+                TranslationContext.For(observer, server: null, MainClass.Instance)
+                    .With("server_name", TargetServer));
 
         string tempText = _textFormat.Invoke();
-
-        Dictionary<string, Func<string>> placeHolders = new Dictionary<string, Func<string>>()
-        {
-            { "%serverName%", () =>
-                {
-                    return Server.Name;
-                }
-            },
-            { "%onlinePlayers%", () =>
-                {
-                    return Server.SessionsCount.ToString();
-                }
-            },
-            { "%maxPlayers%", () =>
-                {
-                    return Server.Settings.MaxClients.ToString();
-                }
-            }
-        };
-
-        foreach (var placeholder in placeHolders)
-        {
-            tempText = tempText.Replace(placeholder.Key, placeholder.Value.Invoke());
-        }
-
-        return tempText;
+        return TranslationManager.Format(
+                tempText
+                    .Replace("%serverName%", "{server_name}")
+                    .Replace("%onlinePlayers%", "{online}")
+                    .Replace("%maxPlayers%", "{max_players}"),
+                TranslationContext.For(observer, Server, MainClass.Instance))
+            .Format();
     }
 
     public void Update()

@@ -3,6 +3,10 @@
 	<PropertyGroup>
 		<TargetFramework>net10.0</TargetFramework>
 		<ImplicitUsings>enable</ImplicitUsings>
+		<Product>SiteLink.Portals</Product>
+		<Description>Adds contextual, per-player server portals to SiteLink worlds.</Description>
+		<Authors>Killers0992</Authors>
+		<Version>1.0.2</Version>
 	</PropertyGroup>
 
 	<ItemGroup>
@@ -13,6 +17,12 @@
 	<ItemGroup>
 	  <ProjectReference Include="..\..\SiteLink\SiteLink.API\SiteLink.API.csproj" />
 	</ItemGroup>
+
+	<ItemGroup>
+	  <None Update="Translations\language_en.yml">
+	    <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
+	  </None>
+	</ItemGroup>
 	
 	<ItemGroup>
 		<Reference Include="UnityEngine.CoreModule">
@@ -21,6 +31,12 @@
 	</ItemGroup>
 
 	<Target Name="PostBuild" AfterTargets="PostBuildEvent">
+		<MakeDir Directories="D:\VS Projects\SiteLink\SiteLink\bin\Debug\net10.0\win-x64\Plugins\Portals\Translations" Condition="'$(Configuration)' == 'Debug'" />
 		<Copy SourceFiles="$(TargetDir)$(TargetName).dll" Condition="'$(Configuration)' == 'Debug'" DestinationFolder="D:\VS Projects\SiteLink\SiteLink\bin\Debug\net10.0\win-x64\Plugins" />
+		<Copy SourceFiles="@(PortalTranslationFiles)" Condition="'$(Configuration)' == 'Debug'" DestinationFolder="D:\VS Projects\SiteLink\SiteLink\bin\Debug\net10.0\win-x64\Plugins\Portals\Translations" />
 	</Target>
+
+	<ItemGroup>
+		<PortalTranslationFiles Include="Translations\*.yml" />
+	</ItemGroup>
 </Project>
